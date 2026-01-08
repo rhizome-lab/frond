@@ -4,7 +4,7 @@ Behavioral rules for Claude Code in this repository.
 
 **References:** `docs/philosophy.md` (design tenets), `docs/architecture.md` (technical choices).
 
-**Frond goal:** Game design primitives - composable building blocks for game mechanics. State machines, procedural generation, camera/player controllers, WFC/tilesets. Building blocks, not a framework.
+**Frond goal:** Runtime game mechanics - composable primitives for game behavior. State machines, timing, pathfinding, spatial queries, stats, inventory, controllers. Building blocks, not a framework.
 
 **Engine agnostic:** No engine dependencies in core. Use `glam` for math (shared by Bevy, macroquad, others). Integration crates (e.g., `frond-bevy`) can provide engine-specific adapters.
 
@@ -64,6 +64,16 @@ Do not:
 - MovementState: Idle, Run, Slide, BulletJump, WallRun
 - Explicit transitions, not implicit
 - Each state owns its behavior
+
+**Data-driven, not hardcoded.** Game-specific concepts (elements, factions, slot types) are user-defined tags, not library enums.
+- Bad: `struct Damage { fire: f32, ice: f32 }` - hardcoded elements
+- Good: `HashMap<DamageTag, Modifier>` - user defines tags in data
+- If a feature is omitted, code shouldn't look "incomplete"
+
+**Scripting-friendly.** Types should be easy to bind to Lua/Rhai/etc:
+- Simple types at API boundaries
+- Avoid complex generics in public APIs
+- Frond provides primitives, users choose scripting language
 
 **When stuck (2+ attempts):** Step back. Am I solving the right problem? Check docs/philosophy.md before questioning design.
 
