@@ -58,20 +58,30 @@ impl State for MovementState {
 }
 ```
 
-## With Bevy
+## Engine Integration (Optional)
 
-Frond primitives integrate with Bevy's ECS:
+Frond is engine-agnostic. Use it standalone or with any engine:
 
 ```rust
-use bevy::prelude::*;
-use frond_fsm::StateMachine;
+// Standalone - no engine
+let mut fsm = StateMachine::new(MovementState::Idle);
+loop {
+    let input = get_input();
+    fsm.update(&input);
+}
 
-fn movement_system(
-    mut query: Query<(&mut StateMachine<MovementState>, &PlayerInput)>,
-) {
+// With Bevy (via frond-bevy)
+use bevy::prelude::*;
+fn movement_system(mut query: Query<(&mut StateMachine<MovementState>, &PlayerInput)>) {
     for (mut fsm, input) in &mut query {
         fsm.update(input);
     }
+}
+
+// With macroquad
+fn update() {
+    fsm.update(&input);
+    draw_circle(pos.x, pos.y, 10.0, RED);
 }
 ```
 

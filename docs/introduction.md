@@ -4,9 +4,9 @@ Frond is a library of game design primitives - composable building blocks for ga
 
 ## What Frond Is
 
-- **Building blocks**, like Bevy crates - not a framework
+- **Building blocks** - not a framework
 - **Primitives** you compose into your game
-- **Bevy-compatible** but not Bevy-dependent
+- **Engine agnostic** - works with Bevy, macroquad, or no engine
 - **Kinematic-first** for predictable game feel
 
 ## What Frond Isn't

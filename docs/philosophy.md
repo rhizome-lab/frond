@@ -64,15 +64,15 @@ Each state owns its behavior. Transitions are explicit. Edge cases are visible.
 **Good:** State machine with explicit `can_double_jump` per state
 → Visible, testable, debuggable
 
-## Bevy Compatibility
+## Engine Agnostic
 
-Compatible with Bevy, not dependent on it.
+No engine dependencies in core frond crates.
 
-- Use individual crates: `bevy_math`, `bevy_ecs`, `bevy_reflect`
-- Core types convertible to/from Bevy equivalents
-- No `bevy` (the full crate) as a dependency
+- Use `glam` for math (shared by Bevy, macroquad, rend3, others)
+- Use `serde` for serialization (works everywhere)
+- Integration crates (e.g., `frond-bevy`) provide engine-specific adapters
 
-This keeps frond usable outside Bevy while playing nice with the ecosystem.
+Frond works with any Rust game engine or no engine at all.
 
 ## General Internal, Constrained APIs
 

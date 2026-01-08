@@ -4,9 +4,9 @@ Behavioral rules for Claude Code in this repository.
 
 **References:** `docs/philosophy.md` (design tenets), `docs/architecture.md` (technical choices).
 
-**Frond goal:** Game design primitives - composable building blocks for game mechanics. State machines, procedural generation, camera/player controllers, WFC/tilesets. Building blocks like Bevy, not a framework.
+**Frond goal:** Game design primitives - composable building blocks for game mechanics. State machines, procedural generation, camera/player controllers, WFC/tilesets. Building blocks, not a framework.
 
-**Bevy compatibility:** Compatible with bevy ecosystem but no hard dependency. Use individual bevy crates (e.g., `bevy_math`, `bevy_ecs`, `bevy_reflect`) where useful. Core types should be convertible to/from bevy equivalents.
+**Engine agnostic:** No engine dependencies in core. Use `glam` for math (shared by Bevy, macroquad, others). Integration crates (e.g., `frond-bevy`) can provide engine-specific adapters.
 
 ## Core Rule
 

@@ -19,28 +19,34 @@ frond/
 
 ### Core Dependencies
 
-- `glam` - Math types (Bevy-compatible)
-- `bevy_math` - Extended math utilities
-- `bevy_reflect` - Reflection for hot-reloading
+- `glam` - Math types (shared by Bevy, macroquad, rend3, others)
 - `serde` - Serialization for config files
+- `thiserror` - Error handling
 
 ### Per-Crate Dependencies
 
 Each crate declares only what it needs. The umbrella `frond` crate re-exports all primitives.
 
-## Bevy Integration
+### Integration Crates
 
-Frond crates are Bevy-compatible but not Bevy-dependent.
+Engine-specific adapters live in separate crates:
 
-**Pattern:**
+```
+frond-bevy/       # Bevy components, systems, plugins
+frond-macroquad/  # macroquad integration
+```
+
+## Engine Agnostic Design
+
+Core frond crates have zero engine dependencies:
+
 ```rust
-// Works standalone
-let fsm = StateMachine::new(MovementState::Idle);
+// Works standalone - no engine required
+let mut fsm = StateMachine::new(MovementState::Idle);
 fsm.update(&input);
 
-// Works with Bevy
-#[derive(Component)]
-struct PlayerFsm(StateMachine<MovementState>);
+// Works with any engine that uses glam
+let velocity: glam::Vec3 = controller.velocity();
 ```
 
 ## Configuration
@@ -57,4 +63,4 @@ MovementConfig(
 )
 ```
 
-Load via `bevy_common_assets` or standard `serde` deserialization.
+Load via `serde` with any format (RON, TOML, JSON).
