@@ -24,7 +24,9 @@
             # Fast linker for incremental builds
             mold
             clang
-            # Bevy dependencies (Linux)
+            # Godot
+            godot_4
+            # Linux game dev dependencies
             pkg-config
             udev
             alsa-lib

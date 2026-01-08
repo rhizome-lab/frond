@@ -2,51 +2,97 @@
 
 Technical architecture of frond.
 
-## Crate Structure
+## Layer Structure
 
 ```
 frond/
-├── crates/
-│   ├── frond/              # Umbrella re-export crate
-│   ├── frond-fsm/          # State machines
-│   ├── frond-controller/   # Character/camera controllers
-│   ├── frond-procgen/      # Procedural generation
-│   └── frond-wfc/          # Wave function collapse
-└── docs/                   # VitePress documentation
+├── core/                    # Pure Rust, no engine deps
+│   ├── frond-spatial/       # Quadtree, BVH, spatial hash
+│   ├── frond-pathfinding/   # A*, flow fields, nav mesh
+│   └── frond-math/          # Kinematic helpers, curves
+│
+├── bindings/                # Engine-specific adapters
+│   ├── frond-godot/         # GDExtension
+│   ├── frond-bevy/          # Bevy systems/components
+│   ├── frond-unity/         # NativePlugin + C# wrapper
+│   └── frond-love/          # Lua FFI for Love2D
+│
+├── scripting/               # Game logic in engine-native languages
+│   ├── frond-gdscript/      # GDScript library
+│   ├── frond-lua/           # Lua patterns (Love2D, etc.)
+│   └── frond-csharp/        # C# patterns (Unity)
+│
+└── docs/                    # Universal patterns, language-agnostic
 ```
 
-## Dependencies
+## What Lives Where
 
-### Core Dependencies
+| Layer | Contents | Why |
+|-------|----------|-----|
+| **core/** | Spatial, pathfinding, math | Perf-critical, complex algorithms, called 1000s/frame |
+| **bindings/** | Engine glue | Thin adapters to expose core to each engine |
+| **scripting/** | FSM, stats, inventory, timing, damage | Game logic, moddable, rapid iteration |
+| **docs/** | Camera, coyote time, patterns | Universal knowledge, any language |
+
+**Rule of thumb:** If modders should be able to change it, it's scripting. If it needs to be fast, it's core.
+
+## Core Dependencies
 
 - `glam` - Math types (shared by Bevy, macroquad, rend3, others)
 - `serde` - Serialization for config files
 - `thiserror` - Error handling
 
-### Per-Crate Dependencies
+## Engine Targets
 
-Each crate declares only what it needs. The umbrella `frond` crate re-exports all primitives.
+| Engine | Binding | Scripting | Status |
+|--------|---------|-----------|--------|
+| **Godot** | GDExtension | GDScript | First target |
+| Bevy | bevy_ecs | (Rust) | Planned |
+| Unity | NativePlugin | C# | Planned |
+| Love2D | Lua FFI | Lua | Planned |
 
-### Integration Crates
+## Godot Integration
 
-Engine-specific adapters live in separate crates:
+### GDScript (scripting/)
 
+Game logic lives in GDScript for moddability:
+
+```gdscript
+# FSM for movement states
+extends Node
+var fsm = preload("res://addons/frond/fsm.gd").new()
+
+func _ready():
+    fsm.add_state("idle")
+    fsm.add_state("run")
+    fsm.set_initial("idle")
 ```
-frond-bevy/       # Bevy components, systems, plugins
-frond-macroquad/  # macroquad integration
-```
 
-## Engine Agnostic Design
+### GDExtension (bindings/)
 
-Core frond crates have zero engine dependencies:
+Performance-critical code in Rust, exposed to GDScript:
 
 ```rust
-// Works standalone - no engine required
-let mut fsm = StateMachine::new(MovementState::Idle);
-fsm.update(&input);
+// bindings/frond-godot/src/lib.rs
+use godot::prelude::*;
 
-// Works with any engine that uses glam
-let velocity: glam::Vec3 = controller.velocity();
+#[derive(GodotClass)]
+#[class(base=Node)]
+struct SpatialIndex { ... }
+
+#[godot_api]
+impl SpatialIndex {
+    #[func]
+    fn query_radius(&self, center: Vector2, radius: f32) -> Array<i64> { ... }
+}
+```
+
+### Headless Testing
+
+Test without the editor:
+
+```bash
+godot --headless --script res://tests/test_fsm.gd --quit
 ```
 
 ## Configuration
@@ -59,8 +105,7 @@ MovementConfig(
     jump_force: 15.0,
     gravity: 40.0,
     slide_decay: 0.95,
-    bullet_jump_force: 50.0,
 )
 ```
 
-Load via `serde` with any format (RON, TOML, JSON).
+Load via `serde` in Rust or `ConfigFile` in GDScript.

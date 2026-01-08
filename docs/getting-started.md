@@ -1,92 +1,93 @@
 # Getting Started
 
-## Installation
+Frond supports multiple engines. Godot is the primary target for its accessibility and modding story.
 
-Add frond crates to your `Cargo.toml`:
+## Engine Options
+
+| Engine | Language | Status |
+|--------|----------|--------|
+| **Godot** | GDScript | First target |
+| Bevy | Rust | Planned |
+| Unity | C# | Planned |
+| Love2D | Lua | Planned |
+
+## Godot Setup
+
+### Prerequisites
+
+With nix flakes:
+```bash
+nix develop  # godot_4 included
+```
+
+Or install Godot 4 manually from [godotengine.org](https://godotengine.org/).
+
+### Development Workflow
+
+1. **Write GDScript patterns** - frond provides composable utilities
+2. **Test headlessly** - no editor needed for quick iteration
+3. **Integrate in editor** - attach to scenes when ready
+
+### Headless Testing
+
+Run GDScript without opening the editor:
+
+```bash
+# Run a script directly
+godot --headless --script res://tests/test_fsm.gd
+
+# Run with quit after (for CI)
+godot --headless --script res://tests/test_fsm.gd --quit
+```
+
+Example test script:
+```gdscript
+# tests/test_fsm.gd
+extends SceneTree
+
+func _init():
+    var fsm = preload("res://addons/frond/fsm.gd").new()
+    fsm.add_state("idle")
+    fsm.add_state("run")
+    fsm.add_transition("idle", "run", func(): return Input.is_action_pressed("move"))
+
+    # Test transitions
+    assert(fsm.current_state == "idle")
+    fsm.process(0.016)  # simulate frame
+    print("FSM test passed")
+    quit()
+```
+
+### Project Structure
+
+```
+my_game/
+├── addons/
+│   └── frond/           # frond GDScript library
+│       ├── fsm.gd
+│       ├── timing.gd
+│       └── stats.gd
+├── scripts/             # your game code
+├── tests/               # headless test scripts
+└── project.godot
+```
+
+## Rust Core (Optional)
+
+For performance-critical features (spatial queries, pathfinding), use the Rust core via GDExtension:
 
 ```toml
+# Cargo.toml
 [dependencies]
-frond-fsm = "0.1"
-frond-controller = "0.1"
+frond-spatial = "0.1"
+frond-pathfinding = "0.1"
+godot = "0.2"  # gdext
 ```
 
-Or use the umbrella crate:
-
-```toml
-[dependencies]
-frond = "0.1"
-```
-
-## Quick Example: Movement State Machine
-
-```rust
-use frond_fsm::{StateMachine, State};
-
-#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
-enum MovementState {
-    Idle,
-    Run,
-    Jump,
-    Fall,
-}
-
-impl State for MovementState {
-    type Context = PlayerInput;
-
-    fn update(&self, ctx: &Self::Context) -> Option<Self> {
-        match self {
-            Self::Idle => {
-                if ctx.jump_pressed { Some(Self::Jump) }
-                else if ctx.move_input.length() > 0.1 { Some(Self::Run) }
-                else { None }
-            }
-            Self::Run => {
-                if ctx.jump_pressed { Some(Self::Jump) }
-                else if ctx.move_input.length() < 0.1 { Some(Self::Idle) }
-                else { None }
-            }
-            Self::Jump => {
-                if ctx.velocity.y < 0.0 { Some(Self::Fall) }
-                else { None }
-            }
-            Self::Fall => {
-                if ctx.grounded { Some(Self::Idle) }
-                else { None }
-            }
-        }
-    }
-}
-```
-
-## Engine Integration (Optional)
-
-Frond is engine-agnostic. Use it standalone or with any engine:
-
-```rust
-// Standalone - no engine
-let mut fsm = StateMachine::new(MovementState::Idle);
-loop {
-    let input = get_input();
-    fsm.update(&input);
-}
-
-// With Bevy (via frond-bevy)
-use bevy::prelude::*;
-fn movement_system(mut query: Query<(&mut StateMachine<MovementState>, &PlayerInput)>) {
-    for (mut fsm, input) in &mut query {
-        fsm.update(input);
-    }
-}
-
-// With macroquad
-fn update() {
-    fsm.update(&input);
-    draw_circle(pos.x, pos.y, 10.0, RED);
-}
-```
+The GDScript layer calls into Rust for heavy computation while keeping game logic moddable.
 
 ## Next Steps
 
-- [State Machines](/primitives/state-machines) - Deep dive into FSMs
+- [State Machines](/primitives/state-machines) - FSM patterns
 - [Character Controllers](/primitives/character-controllers) - Kinematic movement
 - [Philosophy](/philosophy) - Design principles
