@@ -49,10 +49,13 @@ frond/
 
 ## Next Up
 
-- [ ] Research existing solutions per engine (what's already good?)
+- [ ] Learn Godot basics (editor, GDScript, scenes)
+- [ ] Research what Godot has built-in vs gaps
+- [ ] Set up GDExtension for Rust integration
 - [ ] Define core/ crate boundaries
-- [ ] Pick first engine to target (Godot? most modding-friendly)
-- [ ] Design scripting-friendly APIs
+- [ ] Design first scripting pattern (FSM? timing?)
+
+**First target: Godot** - best modding story (.pck), accessible scripting, forces good API design that ports to other engines.
 
 ## Core (Rust)
 
