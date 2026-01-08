@@ -4,9 +4,15 @@ Behavioral rules for Claude Code in this repository.
 
 **References:** `docs/philosophy.md` (design tenets), `docs/architecture.md` (technical choices).
 
-**Frond goal:** Runtime game mechanics - composable primitives for game behavior. State machines, timing, pathfinding, spatial queries, stats, inventory, controllers. Building blocks, not a framework.
+**Frond goal:** Game mechanics toolkit that lowers the barrier to game development. Discoverability, accessibility, moddability.
 
-**Engine agnostic:** No engine dependencies in core. Use `glam` for math (shared by Bevy, macroquad, others). Integration crates (e.g., `frond-bevy`) can provide engine-specific adapters.
+**Multi-engine:** Godot, Bevy, Unity, Love2D, custom engines. Architecture:
+- `core/` - Pure Rust, perf-critical (spatial, pathfinding, math)
+- `bindings/` - Engine adapters (GDExtension, Bevy systems, etc.)
+- `scripting/` - Game logic in engine-native languages (GDScript, Lua, C#)
+- `docs/` - Universal patterns, language-agnostic
+
+**Rule of thumb:** If modders should change it → scripting. If it needs to be fast → core.
 
 ## Core Rule
 

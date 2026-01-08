@@ -1,182 +1,187 @@
 # TODO
 
-## Scope
+## Vision
 
-**Frond** = Runtime game mechanics (per-frame behavior, queries, state)
-**Resin** = Computation-graph-based generation (lazy eval, node graphs, expressions)
+**Frond** = Game mechanics toolkit that lowers the barrier to game development.
 
-The split: Resin generates, Frond runs.
+**Goals:**
+- Discoverability - find good patterns without stumbling
+- Accessibility - use patterns without being an expert
+- Moddability - end users can tweak game behavior
+
+**Multi-engine:** Support Godot, Bevy, Unity, Love2D, custom engines.
+
+**Resin** = Computation-graph-based generation (separate project)
+
+## Architecture
+
+```
+frond/
+├── core/                    # Pure Rust, no engine deps
+│   ├── frond-spatial/       # Quadtree, BVH, spatial hash
+│   ├── frond-pathfinding/   # A*, flow fields, nav mesh
+│   └── frond-math/          # Kinematic helpers, curves
+│
+├── bindings/                # Engine-specific adapters
+│   ├── frond-godot/         # GDExtension
+│   ├── frond-bevy/          # Bevy systems/components
+│   ├── frond-unity/         # NativePlugin + C# wrapper
+│   └── frond-love/          # Lua FFI for Love2D
+│
+├── scripting/               # Game logic in engine-native languages
+│   ├── frond-gdscript/      # GDScript library
+│   ├── frond-lua/           # Lua patterns (Love2D, etc.)
+│   └── frond-csharp/        # C# patterns (Unity)
+│
+└── docs/                    # Universal patterns, language-agnostic
+```
+
+## What Lives Where
+
+| Layer | Contents | Why |
+|-------|----------|-----|
+| **core/** | Spatial, pathfinding, math | Perf-critical, complex algorithms, called 1000s/frame |
+| **bindings/** | Engine glue | Thin adapters to expose core to each engine |
+| **scripting/** | FSM, stats, inventory, timing, damage | Game logic, moddable, rapid iteration |
+| **docs/** | Camera, coyote time, patterns | Universal knowledge, any language |
+
+**Rule of thumb:** If modders should be able to change it, it's scripting. If it needs to be fast, it's core.
 
 ## Next Up
 
-- [ ] Research existing Rust gamedev crates (gaps vs. solved problems)
-- [ ] Refine candidate primitives into fundamental abstractions
-- [ ] Determine crate boundaries (what groups together?)
-- [ ] Design core traits/APIs before implementation
+- [ ] Research existing solutions per engine (what's already good?)
+- [ ] Define core/ crate boundaries
+- [ ] Pick first engine to target (Godot? most modding-friendly)
+- [ ] Design scripting-friendly APIs
 
-## Candidate Primitives
+## Core (Rust)
 
-Runtime game mechanics to evaluate:
-
-1. **State machines** - FSMs, hierarchical, pushdown automata
-2. **Timing/scheduling** - cooldowns, timers, coyote time, input buffering
-3. **Pathfinding** - A*, flow fields, nav mesh queries
-4. **Spatial queries** - quadtrees, BVH, grid hashing
-5. **Stat systems** - modifiers, buffs, calculated values
-6. **Inventory/slots** - generic container abstractions
-7. **Dialogue/quests** - branching trees, condition evaluation
-8. **Character controllers** - kinematic movement math (low barrier, modular)
-9. **Camera controllers** - follow, orbit, first-person math
-10. **Behavior trees** - alternative to FSM for AI
-
-### Questions to Resolve
-
-- [ ] Controllers: math utilities with low barrier to entry - what's the right API?
-- [ ] Animation state machines: subset of FSM, or separate concern?
-- [ ] Buff duration: part of stat system or timing system?
-- [ ] Behavior trees vs FSM vs GOAP - one, some, or all?
-- [ ] Where does Rust end and scripting begin? (GDScript as prior art)
-
-## Design Notes
-
-### Stats System Design
-
-**Principle:** Data-driven tags, not hardcoded enums. Elements, factions, damage types are user-defined.
-
-**Damage pipeline stages:**
-```
-Source (attacker)     →  Calculation  →  Target (defender)  →  Final
-─────────────────────────────────────────────────────────────────────
-attack power             base damage     defense               damage number
-crit multiplier          elemental       resistance            immunity (0x)
-elemental bonuses        faction mods    faction weakness      reduction cap
-weapon mods                              armor
-```
-
-Each stage can have:
-- Flat modifiers (+10)
-- Multiplicative (1.5x, PoE "more")
-- Additive multipliers (PoE "increased", stacks)
-- Curves/functions (level scaling, distance falloff)
-- Conditional (only vs faction X, only if burning)
-
-**Open questions:**
-- How to represent modifier stacking rules? (PoE more vs increased)
-- Curves: inline functions or data-defined (bezier, lookup table)?
-- Order of operations: fixed pipeline or user-defined?
-
-### Inventory System Design
-
-**Principle:** Slots are data, not code. Body parts, slot counts are config.
-
-```rust
-struct SlotDefinition {
-    id: SlotId,
-    group: Option<SlotGroup>,  // "ring", "finger", "armor"
-    count: usize,              // 2 ring slots, 10 cosmetic slots
-    accepts: Vec<ItemTag>,     // filters what items fit
-    body_part: Option<BodyPartId>,  // for paper-doll display
-}
-```
-
-**Examples to support:**
-- PoE: two ring slots
-- Cosmetic: one or more per finger
-- Warframe: multiple mod slots with polarity
-- Diablo: single equipment per body part
-- MMO: gear sets, transmog
-
-**Open questions:**
-- Stacking items (potions x99) vs unique items
-- Item affixes/modifiers (ties into stat system)
-- Inventory weight/size constraints
-
-### Scripting Boundary
-
-| Layer | Responsibility | Language |
-|-------|---------------|----------|
-| Frond | Primitives, perf-critical | Rust |
-| Game logic | Rules, behaviors | Script (Lua/Rhai/user choice) |
-| Data | Configuration | RON/TOML/JSON |
-
-Frond types should be scripting-friendly:
-- Simple types at API boundaries
-- Avoid complex generics in public APIs
-- Serde-compatible for config loading
-
-## Backlog
-
-### State Machines
-- [ ] Basic FSM with typed states and transitions
-- [ ] Hierarchical state machines (substates)
-- [ ] Pushdown automata (state stack)
-- [ ] State machine visualization/debugging
-- [ ] Serialization for save/load
-
-### Timing
-- [ ] Cooldown timers
-- [ ] Coyote time helper
-- [ ] Input buffering
-- [ ] Tick scheduler (run X every N frames/seconds)
-
-### Pathfinding
-- [ ] A* on generic graph
-- [ ] Grid-based pathfinding
-- [ ] Flow fields
-- [ ] Nav mesh representation and queries
+Performance-critical, complex algorithms.
 
 ### Spatial
 - [ ] Quadtree / Octree
 - [ ] Spatial hashing (grid)
 - [ ] BVH for ray/shape queries
 - [ ] Broadphase collision candidates
+- [ ] Generic traits for engine integration
 
-### Stats
-- [ ] Tag-based modifier system (no hardcoded elements)
-- [ ] Modifier types: flat, multiplicative, additive stacking
-- [ ] Damage pipeline with configurable stages
-- [ ] Curves/functions for scaling
-- [ ] Derived stats (calculated from others)
-- [ ] Conditional modifiers (vs faction, on status)
-- [ ] Stat serialization
+### Pathfinding
+- [ ] A* on generic graph
+- [ ] Grid-based pathfinding (JPS?)
+- [ ] Flow fields
+- [ ] Nav mesh representation and queries
 
-### Inventory
+### Math Utilities
+- [ ] Kinematic movement helpers
+- [ ] Curve evaluation (bezier, lookup tables)
+- [ ] Interpolation utilities
+
+## Bindings
+
+Thin adapters per engine.
+
+### Godot (frond-godot)
+- [ ] GDExtension setup
+- [ ] Expose spatial queries to GDScript
+- [ ] Expose pathfinding to GDScript
+- [ ] Resource types for nav meshes
+
+### Bevy (frond-bevy)
+- [ ] Components for spatial structures
+- [ ] Systems for pathfinding
+- [ ] Integration with bevy_rapier/avian
+
+### Unity (frond-unity)
+- [ ] Native plugin build
+- [ ] C# wrapper API
+- [ ] Unity editor integration?
+
+### Love2D (frond-love)
+- [ ] Lua FFI bindings
+- [ ] Love2D-friendly API
+
+## Scripting
+
+Game logic in engine-native languages. Moddable.
+
+### Per-Language Libraries
+
+**GDScript (frond-gdscript):**
+- [ ] FSM base class
+- [ ] Timing utilities (cooldown, coyote time, input buffer)
+- [ ] Stat/modifier system
+- [ ] Inventory slot system
+- [ ] Damage calculation helpers
+
+**Lua (frond-lua):**
+- [ ] Same patterns as GDScript
+- [ ] Love2D integration examples
+
+**C# (frond-csharp):**
+- [ ] Same patterns for Unity
+
+### Patterns to Implement (all languages)
+
+**State Machines:**
+- [ ] Basic FSM
+- [ ] Hierarchical (substates)
+- [ ] Pushdown (state stack)
+
+**Timing:**
+- [ ] Cooldown timers
+- [ ] Coyote time
+- [ ] Input buffering
+- [ ] Tick scheduler
+
+**Stats:**
+- [ ] Tag-based modifiers (not hardcoded elements)
+- [ ] Flat/multiplicative/additive stacking
+- [ ] Derived stats
+- [ ] Buff/debuff with duration
+
+**Inventory:**
 - [ ] Data-driven slot definitions
-- [ ] Slot groups with configurable counts
-- [ ] Body part mapping for paper-doll
-- [ ] Item tag filtering (what fits where)
+- [ ] Tag-based item filtering
 - [ ] Stacking vs unique items
-- [ ] Weight/size constraints (optional)
 
-### Controllers
-- [ ] 2D kinematic movement math
-- [ ] 3D kinematic movement math
-- [ ] Follow camera math
-- [ ] Orbit camera math
-- [ ] First-person look math
+**Controllers:**
+- [ ] Character movement patterns
+- [ ] Camera patterns (follow, orbit, first-person)
 
-### Infrastructure
-- [ ] CI/CD with GitHub Actions
-- [ ] Publish to crates.io
-- [ ] Deploy docs to GitHub Pages
-- [ ] Integration tests for each primitive
+## Documentation
+
+Universal patterns, language-agnostic explanations.
+
+- [ ] Camera patterns (follow, orbit, shake, cinematic)
+- [ ] Coyote time and input buffering explained
+- [ ] Damage calculation patterns (PoE-style, simple, etc.)
+- [ ] Inventory design patterns
+- [ ] FSM vs behavior trees vs GOAP comparison
+- [ ] "How to make X moddable" guide
 
 ## Research
 
-### Existing Crates to Evaluate
+### Existing Solutions
 
-- [ ] `big-brain` - behavior trees / utility AI
-- [ ] `bevy_stat_system` or similar
-- [ ] `pathfinding` crate
-- [ ] Spatial: `rstar`, `bvh`, `parry`
-- [ ] FSM: `statig`, `bevy_state`, `seldom_state`
-- [ ] Inventory: does anything exist?
+- [ ] Godot: what's built-in vs gaps?
+- [ ] Bevy: `big-brain`, `seldom_state`, spatial crates
+- [ ] Unity: common asset store patterns
+- [ ] Love2D: existing Lua libraries
 
-### Prior Art to Study
+### Prior Art
 
-- PoE damage calculation (more vs increased)
-- Warframe mod system (polarity, capacity)
-- GDScript for scripting boundary patterns
+- [ ] RPG in a Box - accessibility patterns
+- [ ] MCreator - modding patterns
+- [ ] GDScript + .pck - modding architecture
+- [ ] PoE damage calculation
+- [ ] Warframe mod system
+
+## Infrastructure
+
+- [ ] Monorepo structure for multi-crate
+- [ ] CI/CD per engine target
+- [ ] Documentation site (VitePress)
+- [ ] Examples per engine
 
 ## For Resin
 
@@ -186,6 +191,6 @@ These belong in resin (graph-based generation), not frond:
 - [ ] Dungeon generation (room placement, corridors)
 - [ ] Cellular automata (cave generation)
 - [ ] Loot tables / weighted random
-- [ ] Noise wrappers (octaves, persistence, domain warping)
+- [ ] Noise wrappers
 - [ ] Terrain generation
 - [ ] Name generators, markov chains
