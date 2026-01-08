@@ -1,11 +1,11 @@
 # Introduction
 
-Frond is a library of game design primitives - composable building blocks for game mechanics.
+Frond is a library of runtime game mechanics - composable primitives for game behavior.
 
 ## What Frond Is
 
+- **Runtime primitives** - per-frame behavior, queries, state
 - **Building blocks** - not a framework
-- **Primitives** you compose into your game
 - **Engine agnostic** - works with Bevy, macroquad, or no engine
 - **Kinematic-first** for predictable game feel
 
@@ -14,19 +14,26 @@ Frond is a library of game design primitives - composable building blocks for ga
 - Not a game engine
 - Not a framework that dictates structure
 - Not physics simulation (use Rapier for that)
+- Not procgen (see [Resin](https://github.com/pterror/resin) for that)
 
 ## Primitives
 
 | Primitive | Purpose |
 |-----------|---------|
 | State Machines | Movement, AI, animation, gameplay states |
-| Procedural Generation | Noise, WFC, tileset generation |
-| Character Controllers | Kinematic movement with game feel |
-| Camera Controllers | Follow, orbit, cinematic cameras |
+| Timing | Cooldowns, coyote time, input buffering |
+| Pathfinding | A*, flow fields, nav mesh queries |
+| Spatial | Quadtrees, BVH, spatial hashing |
+| Controllers | Kinematic character and camera math |
+
+## Scope
+
+**Frond** = Runtime mechanics (runs every frame)
+**Resin** = Generation (computation graphs, lazy eval)
+
+The split: Resin generates, Frond runs.
 
 ## Philosophy
-
-Frond follows these principles:
 
 1. **Building blocks, not frameworks** - You compose primitives
 2. **Kinematic over dynamic** - Code-driven movement feels better

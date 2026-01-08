@@ -3,8 +3,8 @@ layout: home
 
 hero:
   name: Frond
-  text: Game Design Primitives
-  tagline: Composable building blocks for game mechanics
+  text: Runtime Game Mechanics
+  tagline: Composable primitives for game behavior
   actions:
     - theme: brand
       text: Get Started
@@ -15,11 +15,11 @@ hero:
 
 features:
   - title: State Machines
-    details: Clean FSMs for movement, AI, animation, and gameplay states. Explicit transitions, composable behavior.
-  - title: Procedural Generation
-    details: Noise functions, WFC, tileset generation. Parameters over presets.
-  - title: Character Controllers
-    details: Kinematic controllers for predictable, tuneable movement feel. Physics for collision, code for movement.
-  - title: Camera Controllers
-    details: Follow cameras, orbit cameras, cinematic tools. Building blocks you compose.
+    details: FSMs for movement, AI, animation, gameplay. Explicit transitions, composable behavior.
+  - title: Timing & Scheduling
+    details: Cooldowns, coyote time, input buffering. The small utilities that make games feel good.
+  - title: Controllers
+    details: Kinematic character and camera math. Physics for collision, code for movement feel.
+  - title: Pathfinding & Spatial
+    details: A*, flow fields, quadtrees, spatial hashing. Runtime queries for game logic.
 ---

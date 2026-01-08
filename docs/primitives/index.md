@@ -1,23 +1,21 @@
 # Primitives
 
-Frond provides these core primitives:
+Frond provides runtime game mechanics primitives:
 
 ## [State Machines](/primitives/state-machines)
 
-Clean FSMs for movement, AI, animation, and gameplay states.
+FSMs for movement, AI, animation, and gameplay states.
 
 ## [Character Controllers](/primitives/character-controllers)
 
-Kinematic controllers for predictable movement feel.
+Kinematic movement math for predictable game feel.
 
 ## [Camera Controllers](/primitives/camera-controllers)
 
-Follow cameras, orbit cameras, cinematic tools.
+Follow, orbit, and first-person camera math.
 
-## [Procedural Generation](/primitives/procgen)
+---
 
-Noise functions, terrain generation, content synthesis.
+**Coming soon:** Timing, Pathfinding, Spatial queries, Stats, Inventory
 
-## [Wave Function Collapse](/primitives/wfc)
-
-Constraint-based generation for tilesets and levels.
+**Looking for procgen?** See [Resin](https://github.com/pterror/resin) for computation-graph-based generation (WFC, noise, dungeon gen, etc.)

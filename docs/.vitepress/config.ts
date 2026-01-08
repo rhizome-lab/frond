@@ -69,10 +69,8 @@ export default withMermaid(
             text: 'Primitives',
             items: [
               { text: 'State Machines', link: '/primitives/state-machines' },
-              { text: 'Procedural Generation', link: '/primitives/procgen' },
               { text: 'Character Controllers', link: '/primitives/character-controllers' },
               { text: 'Camera Controllers', link: '/primitives/camera-controllers' },
-              { text: 'Wave Function Collapse', link: '/primitives/wfc' },
             ]
           },
         ]
