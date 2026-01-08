@@ -1,0 +1,95 @@
+import { defineConfig } from 'vitepress'
+import { withMermaid } from 'vitepress-plugin-mermaid'
+import fs from 'node:fs'
+import path from 'node:path'
+
+// Auto-generate sidebar items from a directory
+function getSidebarItems(dir: string) {
+  const fullPath = path.join(__dirname, '..', dir)
+  if (!fs.existsSync(fullPath)) {
+    return []
+  }
+
+  return fs
+    .readdirSync(fullPath)
+    .filter((file) => file.endsWith('.md') && file !== 'index.md')
+    .map((file) => {
+      const name = path.basename(file, '.md')
+      // Convert kebab-case to Title Case
+      const text = name
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+      return { text, link: `/${dir}/${name}` }
+    })
+}
+
+export default withMermaid(
+  defineConfig({
+    vite: {
+      optimizeDeps: {
+        include: ['mermaid'],
+      },
+    },
+    title: 'Frond',
+    description: 'Game design primitives',
+
+    base: '/frond/',
+
+    themeConfig: {
+      nav: [
+        { text: 'Guide', link: '/introduction' },
+        { text: 'Design', link: '/philosophy' },
+        { text: 'Primitives', link: '/primitives/' },
+      ],
+
+      sidebar: {
+        '/': [
+          {
+            text: 'Guide',
+            items: [
+              { text: 'Introduction', link: '/introduction' },
+              { text: 'Getting Started', link: '/getting-started' },
+            ]
+          },
+          {
+            text: 'Design',
+            items: [
+              { text: 'Philosophy', link: '/philosophy' },
+              { text: 'Prior Art', link: '/prior-art' },
+              { text: 'Architecture', link: '/architecture' },
+            ]
+          },
+          {
+            text: 'Design Docs',
+            collapsed: true,
+            items: getSidebarItems('design'),
+          },
+          {
+            text: 'Primitives',
+            items: [
+              { text: 'State Machines', link: '/primitives/state-machines' },
+              { text: 'Procedural Generation', link: '/primitives/procgen' },
+              { text: 'Character Controllers', link: '/primitives/character-controllers' },
+              { text: 'Camera Controllers', link: '/primitives/camera-controllers' },
+              { text: 'Wave Function Collapse', link: '/primitives/wfc' },
+            ]
+          },
+        ]
+      },
+
+      socialLinks: [
+        { icon: 'github', link: 'https://github.com/rhizome-lab/frond' }
+      ],
+
+      search: {
+        provider: 'local'
+      },
+
+      editLink: {
+        pattern: 'https://github.com/rhizome-lab/frond/edit/master/docs/:path',
+        text: 'Edit this page on GitHub'
+      },
+    },
+  }),
+)

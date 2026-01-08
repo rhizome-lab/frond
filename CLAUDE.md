@@ -1,0 +1,97 @@
+# CLAUDE.md
+
+Behavioral rules for Claude Code in this repository.
+
+**References:** `docs/philosophy.md` (design tenets), `docs/architecture.md` (technical choices).
+
+**Frond goal:** Game design primitives - composable building blocks for game mechanics. State machines, procedural generation, camera/player controllers, WFC/tilesets. Building blocks like Bevy, not a framework.
+
+**Bevy compatibility:** Compatible with bevy ecosystem but no hard dependency. Use individual bevy crates (e.g., `bevy_math`, `bevy_ecs`, `bevy_reflect`) where useful. Core types should be convertible to/from bevy equivalents.
+
+## Core Rule
+
+**Note things down immediately:**
+- Bugs/issues → fix or add to TODO.md
+- Design decisions → docs/ or code comments
+- Future work → TODO.md
+- Key insights → this file
+
+**Triggers:** User corrects you, 2+ failed attempts, "aha" moment, framework quirk discovered → document before proceeding.
+
+**Don't say these (edit first):** "Fair point", "Should have", "That should go in X" → edit the file BEFORE responding.
+
+**Do the work properly.** When asked to analyze X, actually read X - don't synthesize from conversation. The cost of doing it right < redoing it.
+
+**If citing CLAUDE.md after failing:** The file failed its purpose. Adjust it to actually prevent the failure.
+
+## Negative Constraints
+
+Do not:
+- Announce actions ("I will now...") - just do them
+- Leave work uncommitted
+- Create special cases - design to avoid them
+- Create legacy APIs - one API, update all callers
+- Add to the monolith - split by domain into sub-crates
+- Do half measures - migrate ALL callers when adding abstraction
+- Return tuples - use structs with named fields
+- Mark as done prematurely - note what remains
+- Consider time constraints - we're NOT short on time; optimize for correctness
+- Use Dynamic rigid bodies for character controllers - use Kinematic controllers
+
+## Design Principles
+
+**Building blocks, not frameworks.** Users compose primitives. We don't dictate game structure.
+- State machines that can drive anything (animation, AI, gameplay)
+- Controllers that work with any physics backend
+- Generators that output data, not side effects
+
+**Unify, don't multiply.** One interface for multiple cases > separate interfaces. Plugin systems > hardcoded switches.
+
+**Simplicity over cleverness.** HashMap > inventory crate. OnceLock > lazy_static. Functions > traits until you need the trait.
+
+**Explicit over implicit.** Log when skipping. Show what's at stake before refusing.
+
+**Hot-reloadable feel.** Keep magic numbers in config/asset files. Logic in Rust, parameters in data.
+- Prefer `.ron` or `.toml` for tunable parameters
+- Separate what from how much
+
+**Kinematic over dynamic.** For character controllers:
+- Kinematic = code-driven, predictable, "feels" right
+- Dynamic = physics-driven, floaty, hard to tune
+- Use physics for collision detection, not for movement feel
+
+**State machines for behavior.** LLMs excel at generating clean FSMs:
+- MovementState: Idle, Run, Slide, BulletJump, WallRun
+- Explicit transitions, not implicit
+- Each state owns its behavior
+
+**When stuck (2+ attempts):** Step back. Am I solving the right problem? Check docs/philosophy.md before questioning design.
+
+## Conventions
+
+### Rust
+
+- Edition 2024
+- Workspace with sub-crates by domain (e.g., `crates/frond-fsm/`, `crates/frond-procgen/`)
+- Implementation goes in sub-crates, not all in one monolith
+
+### Updating CLAUDE.md
+
+Add: workflow patterns, conventions, project-specific knowledge.
+Don't add: temporary notes (TODO.md), implementation details (docs/), one-off decisions (commit messages).
+
+### Updating TODO.md
+
+Proactively add features, ideas, patterns, technical debt.
+- Next Up: 3-5 concrete tasks for immediate work
+- Backlog: pending items
+- When completing items: mark as `[x]`, don't delete
+
+### Working Style
+
+Agentic by default - continue through tasks unless:
+- Genuinely blocked and need clarification
+- Decision has significant irreversible consequences
+- User explicitly asked to be consulted
+
+Commit consistently. Each commit = one logical change.
