@@ -41,6 +41,7 @@ export default withMermaid(
         { text: 'Guide', link: '/introduction' },
         { text: 'Design', link: '/philosophy' },
         { text: 'Primitives', link: '/primitives/' },
+        { text: 'Rhizome', link: 'https://rhizome-lab.github.io/' },
       ],
 
       sidebar: {
