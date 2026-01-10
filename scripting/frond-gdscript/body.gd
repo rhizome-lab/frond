@@ -90,14 +90,11 @@ func apply_permanent(tf: Dictionary) -> Dictionary:
 
 ## Apply a FrondTransformation resource permanently to base state.
 ## Checks requirements/conflicts before applying.
+## NOTE: Conflict resolution (via tf_def.get_conflicts()) is caller's responsibility.
 func apply_transformation_permanent(tf_def: Resource) -> Dictionary:
 	var check = tf_def.can_apply(self)
 	if not check.can_apply:
 		return { "success": false, "reason": check.reason, "detail": check.get("tag", check.get("slot", "")) }
-
-	# Remove TFs this one replaces (from the stack)
-	for replace_id in tf_def.replaces:
-		remove_transformation(replace_id)
 
 	return apply_permanent({
 		"slot": tf_def.slot,

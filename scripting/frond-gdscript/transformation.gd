@@ -24,11 +24,40 @@ extends Resource
 ## Tags that conflict - TF can't be applied if slot has any of these
 @export var conflicts_with_tags: Array[String] = []
 
-## Other TF ids that this replaces when applied
-@export var replaces: Array[String] = []
-
 ## Tags required on the slot to apply this TF
 @export var requires_tags: Array[String] = []
+
+## Conflict relationships with other TFs.
+## Keys are TF ids (or "*" for default), values are arbitrary relationship strings.
+## Examples: "stack", "replace", "block", "annihilate", "merge", or any custom string.
+## Game logic decides what each relationship means.
+@export var conflicts: Dictionary = {}  # { tf_id: relationship_string }
+
+
+## Get the relationship with another TF by id.
+## Returns the relationship string, or default ("*"), or null if no relationship defined.
+func get_relationship(other_tf_id: String) -> Variant:
+	if conflicts.has(other_tf_id):
+		return conflicts[other_tf_id]
+	if conflicts.has("*"):
+		return conflicts["*"]
+	return null
+
+
+## Query all conflicts with currently active TFs on a body.
+## Returns array of { existing_id, existing_tf, relationship } dicts.
+## Game logic decides how to resolve each relationship.
+func get_conflicts(body: FrondBody) -> Array:
+	var result: Array = []
+	for tf in body.get_transformations():
+		var rel = get_relationship(tf.id)
+		if rel != null:
+			result.append({
+				"existing_id": tf.id,
+				"existing_tf": tf,
+				"relationship": rel,
+			})
+	return result
 
 
 ## Check if this TF can be applied to a body slot
@@ -51,16 +80,14 @@ func can_apply(body: FrondBody) -> Dictionary:
 	return { "can_apply": true }
 
 
-## Apply this transformation to a body
-## Returns the applied transformation dict, or null if can't apply
+## Apply this transformation to a body.
+## NOTE: This does NOT handle conflict resolution - call get_conflicts() first
+## and resolve them according to your game's policy before calling apply().
+## Returns the applied transformation dict, or null if can't apply.
 func apply(body: FrondBody, duration_override: float = -1.0) -> Variant:
 	var check = can_apply(body)
 	if not check.can_apply:
 		return null
-
-	# Remove TFs this one replaces
-	for replace_id in replaces:
-		body.remove_transformation(replace_id)
 
 	# Calculate duration
 	var duration = duration_override if duration_override >= 0 else base_duration
@@ -88,6 +115,6 @@ static func from_dict(data: Dictionary) -> FrondTransformation:
 	tf.remove_tags.assign(data.get("remove_tags", []))
 	tf.base_duration = data.get("base_duration", 0.0)
 	tf.conflicts_with_tags.assign(data.get("conflicts_with_tags", []))
-	tf.replaces.assign(data.get("replaces", []))
 	tf.requires_tags.assign(data.get("requires_tags", []))
+	tf.conflicts = data.get("conflicts", {})
 	return tf

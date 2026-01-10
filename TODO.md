@@ -146,6 +146,19 @@ Game logic in engine-native languages. Moddable.
 - [ ] Data-driven slot definitions
 - [ ] Tag-based item filtering
 - [ ] Stacking vs unique items
+- [ ] Containers (nested inventories, bags)
+- [ ] Grid-based inventory (PoE/ARPG style, tetris pieces)
+
+**Crafting:**
+- [ ] Recipe matching (shaped vs shapeless)
+- [ ] ARPG style (currency items modify equipment)
+- [ ] Minecraft style (grid patterns)
+- [ ] Terraria style (station + ingredients)
+
+**Time & Scheduling:**
+- [ ] Time progression system (game time vs real time)
+- [ ] NPC schedules/timetables
+- [ ] Event scheduling (triggers at time X)
 
 **Controllers:**
 - [ ] Character movement patterns
