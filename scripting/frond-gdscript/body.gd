@@ -62,13 +62,51 @@ func add_slot(slot: String, tags: Array = []) -> FrondBody:
 	return self
 
 
-## Modify base tags directly (for truly permanent changes)
+## Modify base tags directly (low-level)
 func set_base_tags(slot: String, tags: FrondTags) -> FrondBody:
 	_base_slots[slot] = tags
 	return self
 
 
-# --- Transformation Management ---
+## Apply a transformation permanently to the base state.
+## Unlike apply_transformation(), this modifies base tags directly.
+## The TF "dissolves" into the body - no stack entry, can't be removed.
+## Returns { success: bool, reason: String? }
+func apply_permanent(tf: Dictionary) -> Dictionary:
+	var slot = tf.get("slot", "")
+	if not has_slot(slot):
+		return { "success": false, "reason": "slot_missing" }
+
+	var base = _base_slots[slot]
+
+	# Remove tags first, then add (same order as effective calculation)
+	for tag in tf.get("remove_tags", []):
+		base.remove(tag)
+	for tag in tf.get("add_tags", []):
+		base.add(tag)
+
+	return { "success": true }
+
+
+## Apply a FrondTransformation resource permanently to base state.
+## Checks requirements/conflicts before applying.
+func apply_transformation_permanent(tf_def: Resource) -> Dictionary:
+	var check = tf_def.can_apply(self)
+	if not check.can_apply:
+		return { "success": false, "reason": check.reason, "detail": check.get("tag", check.get("slot", "")) }
+
+	# Remove TFs this one replaces (from the stack)
+	for replace_id in tf_def.replaces:
+		remove_transformation(replace_id)
+
+	return apply_permanent({
+		"slot": tf_def.slot,
+		"add_tags": tf_def.add_tags,
+		"remove_tags": tf_def.remove_tags,
+	})
+
+
+# --- Transformation Stack (Indefinite/Temporary) ---
 
 ## Apply a transformation
 ## tf: { id: String, slot: String, add_tags: Array, remove_tags: Array, duration: float or null }
