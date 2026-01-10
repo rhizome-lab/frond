@@ -45,19 +45,34 @@ func get_relationship(other_tf_id: String) -> Variant:
 
 
 ## Query all conflicts with currently active TFs on a body.
-## Returns array of { existing_id, existing_tf, relationship } dicts.
-## Game logic decides how to resolve each relationship.
+## Returns array of { existing_id, existing_tf, incoming_says, existing_says } dicts.
+## - incoming_says: what THIS TF thinks about the existing one (or null)
+## - existing_says: what the EXISTING TF thinks about this one (or null)
+## Game logic decides how to resolve based on both perspectives.
 func get_conflicts(body: FrondBody) -> Array:
 	var result: Array = []
 	for tf in body.get_transformations():
-		var rel = get_relationship(tf.id)
-		if rel != null:
+		var incoming_says = get_relationship(tf.id)
+		var existing_says = _get_existing_relationship(tf, id)
+
+		# Only include if at least one side has an opinion
+		if incoming_says != null or existing_says != null:
 			result.append({
 				"existing_id": tf.id,
 				"existing_tf": tf,
-				"relationship": rel,
+				"incoming_says": incoming_says,
+				"existing_says": existing_says,
 			})
 	return result
+
+
+## Get what an existing TF dict thinks about another TF id.
+## Existing TFs may have a "source" reference to their FrondTransformation definition.
+static func _get_existing_relationship(existing_tf: Dictionary, other_id: String) -> Variant:
+	var source = existing_tf.get("source")
+	if source == null or not source is FrondTransformation:
+		return null
+	return source.get_relationship(other_id)
 
 
 ## Check if this TF can be applied to a body slot
