@@ -11,9 +11,9 @@ extends RefCounted
 var _tags: Dictionary = {}  # String -> bool (set)
 
 
-func _init(initial_tags: Array[String] = []) -> void:
+func _init(initial_tags: Array = []) -> void:
 	for tag in initial_tags:
-		_tags[tag] = true
+		_tags[String(tag)] = true
 
 
 func add(tag: String) -> FrondTags:
