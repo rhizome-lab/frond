@@ -197,3 +197,11 @@ These belong in resin (graph-based generation), not frond:
 - [ ] Noise wrappers
 - [ ] Terrain generation
 - [ ] Name generators, markov chains
+
+## Low Priority
+
+- [ ] Investigate GDScript typed array ergonomics
+  - `Array[String]` rejects untyped `Array` even with string contents
+  - Currently using untyped `Array` in public APIs as workaround
+  - Check if Godot 4.x has fixes or better patterns
+  - Consider runtime validation helper if typed arrays stay annoying
