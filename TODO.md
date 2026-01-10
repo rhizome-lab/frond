@@ -179,6 +179,14 @@ Universal patterns, language-agnostic explanations.
 - [ ] PoE damage calculation
 - [ ] Warframe mod system
 
+<details>
+<summary>TF game references (NSFW)</summary>
+
+- [ ] BDCC (~/git/BDCC) - body part system, transformation stacking, equipment constraints
+- [ ] Lilith's Throne - similar mechanics, Java-based
+
+</details>
+
 ## Infrastructure
 
 - [ ] Monorepo structure for multi-crate
