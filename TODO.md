@@ -182,8 +182,8 @@ Universal patterns, language-agnostic explanations.
 <details>
 <summary>TF game references (NSFW)</summary>
 
-- [ ] BDCC (~/git/BDCC) - body part system, transformation stacking, equipment constraints
-- [ ] Lilith's Throne - similar mechanics, Java-based
+- [ ] [BDCC](https://github.com/Alexofp/BDCC) (~/git/BDCC) - Godot, MIT license, body part system, transformation stacking, equipment constraints
+- [ ] [Lilith's Throne](https://github.com/Innoxia/liliths-throne-public) (~/git/liliths-throne-public) - Java, custom license (reference only if necessary)
 
 </details>
 
