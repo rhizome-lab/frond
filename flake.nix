@@ -1,5 +1,5 @@
 {
-  description = "frond - game design primitives";
+  description = "playmate - game design primitives";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";

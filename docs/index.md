@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: Frond
+  name: Playmate
   text: Runtime Game Mechanics
   tagline: Composable primitives for game behavior
   actions:
@@ -11,7 +11,7 @@ hero:
       link: /getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/rhizome-lab/frond
+      link: https://github.com/rhi-zone/playmate
 
 features:
   - title: State Machines

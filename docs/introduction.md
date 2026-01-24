@@ -1,15 +1,15 @@
 # Introduction
 
-Frond is a library of runtime game mechanics - composable primitives for game behavior.
+Playmate is a library of runtime game mechanics - composable primitives for game behavior.
 
-## What Frond Is
+## What Playmate Is
 
 - **Runtime primitives** - per-frame behavior, queries, state
 - **Building blocks** - not a framework
 - **Engine agnostic** - works with Bevy, macroquad, or no engine
 - **Kinematic-first** for predictable game feel
 
-## What Frond Isn't
+## What Playmate Isn't
 
 - Not a game engine
 - Not a framework that dictates structure
@@ -28,10 +28,10 @@ Frond is a library of runtime game mechanics - composable primitives for game be
 
 ## Scope
 
-**Frond** = Runtime mechanics (runs every frame)
+**Playmate** = Runtime mechanics (runs every frame)
 **Resin** = Generation (computation graphs, lazy eval)
 
-The split: Resin generates, Frond runs.
+The split: Resin generates, Playmate runs.
 
 ## Philosophy
 

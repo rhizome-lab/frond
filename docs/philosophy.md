@@ -4,7 +4,7 @@ Design principles for frond.
 
 ## Building Blocks, Not Frameworks
 
-Frond provides primitives. Users compose them.
+Playmate provides primitives. Users compose them.
 
 - State machines that can drive anything (animation, AI, gameplay)
 - Controllers that work with any physics backend
@@ -72,7 +72,7 @@ No engine dependencies in core frond crates.
 - Use `serde` for serialization (works everywhere)
 - Integration crates (e.g., `frond-bevy`) provide engine-specific adapters
 
-Frond works with any Rust game engine or no engine at all.
+Playmate works with any Rust game engine or no engine at all.
 
 ## General Internal, Constrained APIs
 

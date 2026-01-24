@@ -6,7 +6,7 @@ members = ["crates/*"]
 version = "0.1.0"
 edition = "2024"
 license = "MIT"
-repository = "https://github.com/rhizome-lab/frond"
+repository = "https://github.com/rhi-zone/playmate"
 
 [workspace.dependencies]
 # Math (bevy-compatible)

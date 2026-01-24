@@ -31,17 +31,17 @@ export default withMermaid(
         include: ['mermaid'],
       },
     },
-    title: 'Frond',
+    title: 'Playmate',
     description: 'Game design primitives',
 
-    base: '/frond/',
+    base: '/playmate/',
 
     themeConfig: {
       nav: [
         { text: 'Guide', link: '/introduction' },
         { text: 'Design', link: '/philosophy' },
         { text: 'Primitives', link: '/primitives/' },
-        { text: 'Rhizome', link: 'https://rhizome-lab.github.io/' },
+        { text: 'rhi', link: 'https://rhi.zone/' },
       ],
 
       sidebar: {
@@ -78,7 +78,7 @@ export default withMermaid(
       },
 
       socialLinks: [
-        { icon: 'github', link: 'https://github.com/rhizome-lab/frond' }
+        { icon: 'github', link: 'https://github.com/rhi-zone/playmate' }
       ],
 
       search: {
@@ -86,7 +86,7 @@ export default withMermaid(
       },
 
       editLink: {
-        pattern: 'https://github.com/rhizome-lab/frond/edit/master/docs/:path',
+        pattern: 'https://github.com/rhi-zone/playmate/edit/master/docs/:path',
         text: 'Edit this page on GitHub'
       },
     },

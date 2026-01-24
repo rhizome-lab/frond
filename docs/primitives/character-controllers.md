@@ -11,7 +11,7 @@ Kinematic character controllers for predictable game feel.
 | Tuning | Direct: change numbers | Indirect: mass, friction |
 | Use case | Platformers, action games | Ragdolls, realistic sims |
 
-Frond is kinematic-first. Use physics for collision detection, not movement.
+Playmate is kinematic-first. Use physics for collision detection, not movement.
 
 ## Basic Structure
 

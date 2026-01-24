@@ -4,7 +4,7 @@ Existing solutions and how frond relates.
 
 ## State Machines
 
-| Library | Approach | Frond Relation |
+| Library | Approach | Playmate Relation |
 |---------|----------|----------------|
 | `bevy_state` | Bevy-native states | Inspiration; frond is engine-agnostic |
 | `statig` | Hierarchical FSM | Reference for advanced patterns |
@@ -12,15 +12,15 @@ Existing solutions and how frond relates.
 
 ## Character Controllers
 
-| Library | Approach | Frond Relation |
+| Library | Approach | Playmate Relation |
 |---------|----------|----------------|
-| `bevy_rapier` KCC | Rapier-integrated | Frond wraps physics-agnostic logic |
+| `bevy_rapier` KCC | Rapier-integrated | Playmate wraps physics-agnostic logic |
 | `bevy_xpbd` character | XPBD-based | Alternative physics backend |
 | Godot CharacterBody3D | Engine-integrated | Inspiration for API |
 
 ## Procedural Generation
 
-| Library | Approach | Frond Relation |
+| Library | Approach | Playmate Relation |
 |---------|----------|----------------|
 | `noise` | Noise functions | Dependency |
 | `wfc` | Wave Function Collapse | Reference implementation |
@@ -33,7 +33,7 @@ Existing solutions and how frond relates.
 - **Hollow Knight** - Responsive 2D movement
 - **DOOM Eternal** - High-mobility FPS movement
 
-## Why Frond?
+## Why Playmate?
 
 Existing solutions are either:
 1. **Framework-bound** (Godot, Unity)
@@ -41,4 +41,4 @@ Existing solutions are either:
 3. **Too low-level** (raw physics APIs)
 4. **Too high-level** (full game templates)
 
-Frond fills the gap: engine-agnostic primitives with game-ready APIs.
+Playmate fills the gap: engine-agnostic primitives with game-ready APIs.

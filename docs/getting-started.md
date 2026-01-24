@@ -1,6 +1,6 @@
 # Getting Started
 
-Frond supports multiple engines. Godot is the primary target for its accessibility and modding story.
+Playmate supports multiple engines. Godot is the primary target for its accessibility and modding story.
 
 ## Engine Options
 

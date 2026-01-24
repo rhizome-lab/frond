@@ -4,7 +4,7 @@ Behavioral rules for Claude Code in this repository.
 
 **References:** `docs/philosophy.md` (design tenets), `docs/architecture.md` (technical choices).
 
-**Frond goal:** Game mechanics toolkit that lowers the barrier to game development. Discoverability, accessibility, moddability.
+**Playmate goal:** Game mechanics toolkit that lowers the barrier to game development. Discoverability, accessibility, moddability.
 
 **Multi-engine:** Godot, Bevy, Unity, Love2D, custom engines. Architecture:
 - `core/` - Pure Rust, perf-critical (spatial, pathfinding, math)
@@ -106,7 +106,7 @@ Do not:
 **Scripting-friendly.** Types should be easy to bind to Lua/Rhai/etc:
 - Simple types at API boundaries
 - Avoid complex generics in public APIs
-- Frond provides primitives, users choose scripting language
+- Playmate provides primitives, users choose scripting language
 
 **When stuck (2+ attempts):** Step back. Am I solving the right problem? Check docs/philosophy.md before questioning design.
 
@@ -115,8 +115,10 @@ Do not:
 ### Rust
 
 - Edition 2024
-- Workspace with sub-crates by domain (e.g., `crates/frond-fsm/`, `crates/frond-procgen/`)
+- Workspace with sub-crates by domain (e.g., `crates/rhi-playmate-fsm/`, `crates/rhi-playmate-procgen/`)
 - Implementation goes in sub-crates, not all in one monolith
+- All crates prefixed with `rhi-playmate-*`
+- Binary name: `playmate`
 
 ### Updating CLAUDE.md
 

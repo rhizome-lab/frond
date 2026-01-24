@@ -1,6 +1,6 @@
 # Primitives
 
-Frond provides runtime game mechanics primitives:
+Playmate provides runtime game mechanics primitives:
 
 ## [State Machines](/primitives/state-machines)
 
