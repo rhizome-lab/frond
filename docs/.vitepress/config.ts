@@ -41,7 +41,7 @@ export default withMermaid(
         { text: 'Guide', link: '/introduction' },
         { text: 'Design', link: '/philosophy' },
         { text: 'Primitives', link: '/primitives/' },
-        { text: 'rhi', link: 'https://rhi.zone/' },
+        { text: 'rhi', link: 'https://docs.rhi.zone/' },
       ],
 
       sidebar: {
