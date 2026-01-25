@@ -84,6 +84,8 @@ Do not:
 
 **Explicit over implicit.** Log when skipping. Show what's at stake before refusing.
 
+**Separate niche from shared.** Don't bloat shared config with feature-specific data. Use separate files for specialized data.
+
 **Hot-reloadable feel.** Keep magic numbers in config/asset files. Logic in Rust, parameters in data.
 - Prefer `.ron` or `.toml` for tunable parameters
 - Separate what from how much
